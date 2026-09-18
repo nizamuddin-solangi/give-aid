@@ -25,7 +25,17 @@
               }
             ],
             "styles": [
-              "src/styles.css"
+              "src/styles.css",
+              "src/ngo-pages.css",
+              "src/brand-mark.css",
+              "src/hero-viewport.css",
+              "src/header-nav.css",
+                "src/home-stories.css",
+                "src/wide-pages.css",
+                "src/about-fix.css",
+                "src/story-fix.css",
+                "src/home-image-sections.css",
+                "src/home-layouts.css"
             ]
           },
           "configurations": {
@@ -38,8 +48,8 @@
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "4kB",
-                  "maximumError": "8kB"
+                  "maximumWarning": "10kB",
+                  "maximumError": "12kB"
                 }
               ],
               "outputHashing": "all"

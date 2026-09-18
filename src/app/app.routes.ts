@@ -1,7 +1,8 @@
 import { Routes } from '@angular/router';
+import { HomeComponent } from './features/home.component';
 const page=(page:string)=>()=>import('./features/page.component').then(m=>m.PageComponent);
 export const routes: Routes = [
- {path:'',pathMatch:'full',loadComponent:page('home'),data:{page:'home'}},
+ {path:'',pathMatch:'full',component:HomeComponent},
  {path:'donate',loadComponent:page('donate'),data:{page:'donate'}}, {path:'programmes',loadComponent:page('programmes'),data:{page:'programmes'}},
  {path:'help',loadComponent:page('help'),data:{page:'help'}}, {path:'about',loadComponent:page('about'),data:{page:'about'}},
  {path:'support',loadComponent:page('support'),data:{page:'support'}}, {path:'transparency',loadComponent:page('transparency'),data:{page:'transparency'}},
