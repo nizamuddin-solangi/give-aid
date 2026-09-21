@@ -1,0 +1,596 @@
+<!-- ═══════════════════════════════════════════════════════════════════════
+     DONATE — Frictionless, emotional, trust-building
+     ═══════════════════════════════════════════════════════════════════════ -->
+<section *ngIf="page==='donate'" class="pg-donate" [@loom]="weave()">
+
+  <div class="pg-hero">
+    <p class="kicker">Choose your cause</p>
+    <h1>Put your giving where<br>it's needed <em>today</em>.</h1>
+    <p class="pg-hero-sub">Pick the work you want to stand beside. See exactly what your gift makes possible, and follow it all the way through.</p>
+  </div>
+
+  <div class="donate-body">
+    <!-- LEFT: Cause selection + Amount -->
+    <div class="donate-left">
+      <h2 class="section-label">Select a cause</h2>
+      <div class="cause-cards">
+        <button *ngFor="let c of causes" type="button"
+          (click)="choose(c[0])"
+          [class.active]="selected()===c[0]"
+          [class]="'cause-card cause-' + c[2]"
+          [attr.aria-pressed]="selected()===c[0]">
+          <strong>{{c[0]}}</strong>
+          <span>{{c[1]}}</span>
+          <i class="cause-tick">✓</i>
+        </button>
+      </div>
+
+      <div class="amount-section">
+        <h2 class="section-label">Your contribution</h2>
+        <div class="amount-pills">
+          <button *ngFor="let n of [1000,2500,5000,10000]"
+            (click)="setAmount(n)"
+            [class.active]="amount()===n"
+            type="button">Rs. {{n|number}}</button>
+        </div>
+        <div class="impact-calc">
+          <span class="impact-icon">✦</span>
+          <p>{{impactText()}}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: Checkout -->
+    <aside class="donate-checkout">
+      <div class="checkout-header">
+        <span class="checkout-label">Giving to</span>
+        <strong class="checkout-cause">{{selected()}}</strong>
+        <b class="checkout-amount">Rs. {{amount()|number}}</b>
+      </div>
+
+      <div *ngIf="done()" class="checkout-success" role="status">
+        <div class="success-mark">✨</div>
+        <h2>Thank you for your generosity.</h2>
+        <p>Your gift of <strong>Rs. {{amount()|number}}</strong> for <strong>{{selected()}}</strong> has been recorded. A detailed receipt will arrive by email.</p>
+        <div class="success-links">
+          <a routerLink="/invite" class="button">Invite someone to give</a>
+          <a routerLink="/programmes">See our programmes →</a>
+        </div>
+      </div>
+
+      <form *ngIf="!done()" [formGroup]="checkout" (ngSubmit)="donate()" novalidate class="checkout-form">
+        <h2>Card details</h2>
+        <label><span>Cardholder name</span>
+          <input formControlName="cardholder" autocomplete="cc-name" placeholder="Full name on card">
+          <small *ngIf="invalid('cardholder')">Please enter the name on the card.</small>
+        </label>
+        <label><span>Card number</span>
+          <input formControlName="card" inputmode="numeric" autocomplete="cc-number" placeholder="4242 4242 4242 4242">
+          <small *ngIf="invalid('card')">Check this card number.</small>
+        </label>
+        <div class="form-row">
+          <label><span>Expiry</span>
+            <input formControlName="expiry" placeholder="MM/YY" inputmode="numeric" autocomplete="cc-exp">
+            <small *ngIf="invalid('expiry')">Use a future MM/YY.</small>
+          </label>
+          <label><span>CVV</span>
+            <input formControlName="cvv" inputmode="numeric" autocomplete="cc-csc" placeholder="•••">
+            <small *ngIf="invalid('cvv')">3 or 4 digits.</small>
+          </label>
+        </div>
+        <button class="donate-btn" type="submit">Give Rs. {{amount()|number}}</button>
+        <p class="form-note">🔒 Demo checkout — no payment is taken.</p>
+      </form>
+    </aside>
+  </div>
+
+  <div class="donate-trust">
+    <span><b>7,200+</b> donations completed</span>
+    <span><b>18</b> verified NGO partners</span>
+    <span><b>0%</b> admin fees on donations</span>
+    <span><b>2 day</b> query response time</span>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════════════════
+     PROGRAMMES — Editorial storytelling, magazine-grade layouts
+     ═══════════════════════════════════════════════════════════════════════ -->
+<section *ngIf="page==='programmes'" class="pg-programmes" [@loom]="weave()">
+
+  <div class="pg-hero">
+    <p class="kicker">Our programmes</p>
+    <h1>Work that looks like ordinary<br>life getting <em>easier</em>.</h1>
+    <p class="pg-hero-sub">Six active programmes. Eighteen partner NGOs. Each one stays close to the people they serve and adjusts the work with them — not for them.</p>
+  </div>
+
+  <!-- Programme Stories -->
+  <div class="prog-stories">
+    <article *ngFor="let p of programmes; let i = index" class="prog-story" [class]="'prog-story prog-' + p.color">
+      <div class="prog-number"><span>{{p.num}}</span></div>
+      <div class="prog-content">
+        <p class="kicker">{{p.subtitle}}</p>
+        <h2>{{p.title}}</h2>
+        <p class="prog-desc">{{p.desc}}</p>
+        <div class="prog-stat">
+          <b>{{p.stat}}</b>
+          <span>{{p.statLabel}}</span>
+        </div>
+        <a routerLink="/donate" (click)="choose(causes[i]?causes[i][0]:causes[0][0])" class="prog-cta">Support this programme →</a>
+      </div>
+      <div class="prog-img">
+        <img [src]="p.img" [alt]="p.title" loading="lazy">
+      </div>
+    </article>
+  </div>
+
+  <!-- Gift Journey -->
+  <div class="prog-journey">
+    <div class="prog-journey-head">
+      <p class="kicker">Follow one gift through the week</p>
+      <h2>The working ledger.</h2>
+      <p>Programme work is a chain of small, visible decisions. Here is what a typical education gift makes possible.</p>
+    </div>
+    <div class="journey-steps">
+      <div class="journey-line"></div>
+      <article>
+        <span class="journey-dot">1</span>
+        <b>MON</b>
+        <strong>Need logged</strong>
+        <p>Noor Centre flags transport shortfall for 14 students.</p>
+      </article>
+      <article>
+        <span class="journey-dot">2</span>
+        <b>WED</b>
+        <strong>Gift matched</strong>
+        <p>Gifts are grouped with the exact route and amount needed.</p>
+      </article>
+      <article>
+        <span class="journey-dot">3</span>
+        <b>FRI</b>
+        <strong>Work moves</strong>
+        <p>Passes are bought locally and handed to families before Monday.</p>
+      </article>
+      <article>
+        <span class="journey-dot">4</span>
+        <b>NEXT</b>
+        <strong>Note returned</strong>
+        <p>A coordinator sends a short field note back to the thread.</p>
+      </article>
+    </div>
+    <a routerLink="/donate" class="button">Put a gift in motion</a>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════════════════
+     ABOUT — Deep, immersive, personal
+     ═══════════════════════════════════════════════════════════════════════ -->
+<section *ngIf="page==='about'" class="pg-about" [@loom]="weave()">
+
+  <div class="pg-hero">
+    <p class="kicker">About Give-AID</p>
+    <h1>A practical bridge between people who care and people already doing the <em>work</em>.</h1>
+    <p class="pg-hero-sub">We didn't start with a grand plan. We started with a question: why is it so hard to find and support the people already doing good work in your own city?</p>
+  </div>
+
+  <!-- Tabbed navigation -->
+  <nav class="about-tabs">
+    <button *ngFor="let t of ['mission','values','story']" (click)="setTab(t)" [class.active]="activeTab()===t" type="button">{{t === 'mission' ? 'Our Mission' : t === 'values' ? 'Our Values' : 'Our Story'}}</button>
+  </nav>
+
+  <!-- Tab: Mission -->
+  <div class="about-panel" *ngIf="activeTab()==='mission'">
+    <div class="about-grid">
+      <div>
+        <h2>Make reliable, local care<br>easier to <em>join</em>.</h2>
+        <p>We believe that the best welfare work is already happening — in community centres, in family kitchens, on school buses driven by people who care. Give-AID makes that work easier to discover, support, and follow.</p>
+        <p>We don't replace local NGOs. We make their work visible. We don't aggregate donations blindly — we connect each gift to a specific programme need, and we report back on what happened.</p>
+      </div>
+      <div class="about-stats">
+        <div class="stat-block"><b>18</b><span>partner NGOs working across Karachi</span></div>
+        <div class="stat-block"><b>46</b><span>active programmes with named teams</span></div>
+        <div class="stat-block"><b>7,200+</b><span>donations directed with full traceability</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab: Values -->
+  <div class="about-panel" *ngIf="activeTab()==='values'">
+    <div class="values-grid">
+      <article>
+        <span class="value-num">01</span>
+        <h3>Proximity over scale</h3>
+        <p>We'd rather serve 200 families well than 2,000 poorly. Every programme stays local, personal, and accountable.</p>
+      </article>
+      <article>
+        <span class="value-num">02</span>
+        <h3>Transparency as default</h3>
+        <p>If we can't explain where a gift went, we haven't done our job. Every donation is traceable, every partner is named.</p>
+      </article>
+      <article>
+        <span class="value-num">03</span>
+        <h3>Dignity in every detail</h3>
+        <p>We ask permission before sharing stories. We don't use poverty as a marketing tool. People are participants, not subjects.</p>
+      </article>
+      <article>
+        <span class="value-num">04</span>
+        <h3>Work with, not for</h3>
+        <p>Every programme is designed with the community it serves. Families choose what they need. Partners adjust what they offer.</p>
+      </article>
+    </div>
+  </div>
+
+  <!-- Tab: Story -->
+  <div class="about-panel" *ngIf="activeTab()==='story'">
+    <div class="timeline">
+      <div class="timeline-line"></div>
+      <article *ngFor="let m of milestones" class="timeline-item">
+        <span class="timeline-year">{{m.year}}</span>
+        <div>
+          <h3>{{m.title}}</h3>
+          <p>{{m.desc}}</p>
+        </div>
+      </article>
+    </div>
+  </div>
+
+  <!-- Team -->
+  <div class="about-team">
+    <div class="about-team-head">
+      <p class="kicker">People holding the thread</p>
+      <h2>A small team with long conversations.</h2>
+      <p>We work across programme listening, community organising and product craft. The job is to keep the platform useful to the people doing the work.</p>
+    </div>
+    <div class="team-grid">
+      <article *ngFor="let t of team" class="team-card">
+        <span class="team-avatar" [class]="'team-avatar avatar-' + t.color">{{t.initial}}</span>
+        <strong>{{t.name}}</strong>
+        <small>{{t.role}}</small>
+        <p>{{t.bio}}</p>
+      </article>
+    </div>
+  </div>
+
+  <!-- Join CTA -->
+  <div class="about-cta">
+    <h2>Want to be part of this?</h2>
+    <p>We hire people who can make a useful thing and explain it plainly.</p>
+    <div class="about-cta-links">
+      <a routerLink="/register" class="button">Join as a volunteer</a>
+      <a routerLink="/contact">Write to us about careers →</a>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════════════════
+     PARTNERS — Sleek, trust-building, impact-driven
+     ═══════════════════════════════════════════════════════════════════════ -->
+<section *ngIf="page==='partners'" class="pg-partners" [@loom]="weave()">
+
+  <div class="pg-hero">
+    <p class="kicker">Our partners</p>
+    <h1>Good work<br>has <em>company</em>.</h1>
+    <p class="pg-hero-sub">These organisations help turn a donation into a useful next step. Not a logo wall. A working table.</p>
+  </div>
+
+  <div class="partner-grid">
+    <article *ngFor="let p of partners" class="partner-card">
+      <div class="partner-top">
+        <h2>{{p.name}}</h2>
+        <small>{{p.type}}</small>
+      </div>
+      <h3 class="partner-impact">{{p.impact}}</h3>
+      <p>{{p.desc}}</p>
+      <div class="partner-stat">
+        <b>{{p.stat}}</b>
+        <span>{{p.statLabel}}</span>
+      </div>
+    </article>
+  </div>
+
+  <div class="partner-how">
+    <div>
+      <p class="kicker">How the partnership works</p>
+      <h2>Partners lend reach, rooms, transport, tools or steady funding.</h2>
+      <p>Each one joins a programme where their help can be used with care. We don't accept partnerships that don't serve the people we work with.</p>
+    </div>
+    <div class="partner-process">
+      <article><b>01</b><h3>Application</h3><p>Organisations apply or are invited based on programme needs.</p></article>
+      <article><b>02</b><h3>Assessment</h3><p>We review 6+ months of active work and community relationships.</p></article>
+      <article><b>03</b><h3>Agreement</h3><p>Both sides agree on scope, updates, and accountability standards.</p></article>
+      <article><b>04</b><h3>Active Partnership</h3><p>Quarterly reviews ensure the partnership serves the community well.</p></article>
+    </div>
+  </div>
+
+  <div class="partner-cta">
+    <h2>Interested in partnering?</h2>
+    <p>If your organisation has something practical to offer — reach, resources, or expertise — we'd like to hear from you.</p>
+    <a routerLink="/contact" class="button">Start a conversation</a>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════════════════
+     GALLERY — Masonry grid, hover reveals, category filters
+     ═══════════════════════════════════════════════════════════════════════ -->
+<section *ngIf="page==='gallery'" class="pg-gallery" [@loom]="weave()">
+
+  <div class="pg-hero">
+    <p class="kicker">Gallery</p>
+    <h1>Days we were glad<br>to be <em>there</em>.</h1>
+    <p class="pg-hero-sub">Shared with permission by our programme teams. Every image has a story — hover to read it.</p>
+  </div>
+
+  <div class="gallery-filters">
+    <button *ngFor="let cat of galleryCategories"
+      (click)="setGalleryFilter(cat)"
+      [class.active]="galleryFilter()===cat"
+      type="button">{{cat}}</button>
+  </div>
+
+  <div class="gallery-masonry">
+    <article *ngFor="let img of filteredGallery()" class="gallery-item" [class]="'gallery-item gallery-' + img.size">
+      <img [src]="img.src" [alt]="img.caption" loading="lazy">
+      <div class="gallery-overlay">
+        <span class="gallery-cat">{{img.category}}</span>
+        <p>{{img.caption}}</p>
+      </div>
+    </article>
+  </div>
+
+  <div class="gallery-cta">
+    <p>Want to see the work in person?</p>
+    <a routerLink="/register" class="button">Register for a programme visit</a>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════════════════
+     HELP — FAQ accordion, beautiful categories
+     ═══════════════════════════════════════════════════════════════════════ -->
+<section *ngIf="page==='help'" class="pg-help" [@loom]="weave()">
+
+  <div class="pg-hero">
+    <p class="kicker">Help centre</p>
+    <h1>Clear answers,<br>before you <em>need</em> them.</h1>
+    <p class="pg-hero-sub">We believe in answering questions before they become problems. If you can't find what you need, we're just a message away.</p>
+  </div>
+
+  <div class="faq-list">
+    <details *ngFor="let f of faqs; let i = index" [attr.open]="i===0 ? '' : null">
+      <summary>
+        <span class="faq-num">{{(i+1) < 10 ? '0' + (i+1) : i+1}}</span>
+        <span class="faq-q">{{f.q}}</span>
+        <span class="faq-toggle">+</span>
+      </summary>
+      <p class="faq-a">{{f.a}}</p>
+    </details>
+  </div>
+
+  <div class="help-actions">
+    <div class="help-action-head">
+      <p class="kicker">Still not sure where to start?</p>
+      <h2>Tell us the shape of the problem.</h2>
+      <p>You don't need the perfect words. Choose the door that sounds closest.</p>
+    </div>
+    <div class="help-doors">
+      <a routerLink="/contact" class="help-door">
+        <strong>Something went wrong</strong>
+        <span>Raise a query with the team →</span>
+      </a>
+      <a routerLink="/programmes" class="help-door">
+        <strong>I want to see the work</strong>
+        <span>Browse programmes and updates →</span>
+      </a>
+      <a routerLink="/register" class="help-door">
+        <strong>I want to get involved</strong>
+        <span>Register for nearby chances →</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════════════════
+     SUPPORT — Service pathways, warm & clear
+     ═══════════════════════════════════════════════════════════════════════ -->
+<section *ngIf="page==='support'" class="pg-support" [@loom]="weave()">
+
+  <div class="pg-hero">
+    <p class="kicker">Get support</p>
+    <h1>Start with the help that is<br>closest to <em>you</em>.</h1>
+    <p class="pg-hero-sub">Give-AID works through local partner teams. Tell us what you need and we'll point you to the right programme or a trusted local service.</p>
+  </div>
+
+  <div class="support-grid">
+    <article *ngFor="let s of supportServices" class="support-card">
+      <span class="support-num">{{s.num}}</span>
+      <h2>{{s.title}}</h2>
+      <p>{{s.desc}}</p>
+      <small class="support-who">{{s.who}}</small>
+      <a routerLink="/contact" class="support-link">Ask about this support →</a>
+    </article>
+  </div>
+
+  <aside class="support-note">
+    <p class="kicker">Before you contact us</p>
+    <h2>We will be clear about what we can and cannot provide.</h2>
+    <p>Support is based on availability, location and partner capacity. We do not ask for payment to connect you to a listed service.</p>
+    <div class="support-note-links">
+      <a routerLink="/help">Read common questions →</a>
+      <a routerLink="/transparency">Our accountability commitments →</a>
+    </div>
+  </aside>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════════════════
+     TRANSPARENCY — Radical honesty, data-driven trust
+     ═══════════════════════════════════════════════════════════════════════ -->
+<section *ngIf="page==='transparency'" class="pg-transparency" [@loom]="weave()">
+
+  <div class="pg-hero">
+    <p class="kicker">Transparency &amp; accountability</p>
+    <h1>Trust needs more<br>than a good <em>story</em>.</h1>
+    <p class="pg-hero-sub">We aim to make the decisions behind Give-AID visible, understandable and open to questions. Here's everything laid bare.</p>
+  </div>
+
+  <div class="trans-stats">
+    <article *ngFor="let s of transparencyStats" class="trans-stat">
+      <b>{{s.number}}</b>
+      <span>{{s.label}}</span>
+    </article>
+  </div>
+
+  <div class="trans-commitments">
+    <div class="trans-commit-head">
+      <p class="kicker">Our commitments in plain language</p>
+      <h2>What we promise, and how you can check.</h2>
+    </div>
+    <div class="commit-list">
+      <article *ngFor="let c of commitments" class="commit-item">
+        <div class="commit-label">
+          <span class="commit-num">{{c.num}}</span>
+          <small>{{c.area}}</small>
+        </div>
+        <div class="commit-body">
+          <h3>{{c.title}}</h3>
+          <p>{{c.desc}}</p>
+        </div>
+      </article>
+    </div>
+  </div>
+
+  <div class="trans-cta">
+    <h2>Questions about how we work?</h2>
+    <p>We welcome scrutiny. If something doesn't look right, tell us.</p>
+    <div class="trans-cta-links">
+      <a routerLink="/contact" class="button">Raise a query</a>
+      <a routerLink="/help">Read our FAQ →</a>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════════════════
+     CONTACT — Split layout, warm & professional
+     ═══════════════════════════════════════════════════════════════════════ -->
+<section *ngIf="page==='contact'" class="pg-contact" [@loom]="weave()">
+
+  <div class="pg-hero">
+    <p class="kicker">Contact / raise a query</p>
+    <h1>Tell us what you<br>need to <em>know</em>.</h1>
+    <p class="pg-hero-sub">Use this for a practical question, partnership idea or a concern. We read every message and respond within 2 working days.</p>
+  </div>
+
+  <div class="contact-body">
+    <div class="contact-form-wrap">
+      <div *ngIf="sent()" class="contact-success" role="status">
+        <div class="success-mark">✨</div>
+        <h2>Message received.</h2>
+        <p>We'll reply to the address you gave us within 2 working days.</p>
+        <a routerLink="/programmes">Browse our programmes while you wait →</a>
+      </div>
+
+      <form *ngIf="!sent()" [formGroup]="contact" (ngSubmit)="submitContact()" novalidate class="contact-form">
+        <label><span>Your name</span>
+          <input formControlName="name" placeholder="Full name">
+        </label>
+        <label><span>Email address</span>
+          <input formControlName="email" type="email" placeholder="you@example.com">
+        </label>
+        <label><span>Subject <small>(optional)</small></span>
+          <input formControlName="subject" placeholder="What is this about?">
+        </label>
+        <label><span>Your message</span>
+          <textarea formControlName="message" rows="5" placeholder="Tell us what you need..."></textarea>
+        </label>
+        <button class="button" type="submit">Send message</button>
+      </form>
+    </div>
+
+    <aside class="contact-info">
+      <h3>Other ways to reach us</h3>
+      <div class="contact-detail">
+        <strong>Email</strong>
+        <span>hello&#64;give-aid.org</span>
+      </div>
+      <div class="contact-detail">
+        <strong>Office</strong>
+        <span>Karachi, Pakistan</span>
+      </div>
+      <div class="contact-detail">
+        <strong>Response time</strong>
+        <span>Within 2 working days</span>
+      </div>
+      <div class="contact-detail">
+        <strong>Safeguarding</strong>
+        <span>safeguarding&#64;give-aid.org</span>
+      </div>
+      <div class="contact-hours">
+        <strong>Hours</strong>
+        <span>Mon–Fri, 9:00 AM – 6:00 PM PKT</span>
+      </div>
+    </aside>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════════════════
+     AUTH PAGES — Register, Login, Invite — Glassmorphism forms
+     ═══════════════════════════════════════════════════════════════════════ -->
+<section *ngIf="page==='register' || page==='login' || page==='invite'" class="pg-auth" [@loom]="weave()">
+
+  <div class="auth-backdrop">
+    <div class="auth-blob auth-blob-1"></div>
+    <div class="auth-blob auth-blob-2"></div>
+    <div class="auth-blob auth-blob-3"></div>
+  </div>
+
+  <div class="auth-card">
+    <div class="auth-header">
+      <p class="kicker">{{page==='invite' ? 'Invite a friend' : page==='login' ? 'Welcome back' : 'Join Give-AID'}}</p>
+      <h1>{{page==='invite' ? 'Bring one good person into the work.' : page==='login' ? 'Sign in to follow the causes you care about.' : 'Make your giving easier to keep close.'}}</h1>
+      <p *ngIf="page==='register'">A few details help us share the right local opportunities. You can change them later.</p>
+    </div>
+
+    <form class="auth-form" novalidate>
+      <label *ngIf="page!=='invite'">
+        <span>{{page==='login' ? 'Email address' : 'Full name'}}</span>
+        <input [type]="page==='login' ? 'email' : 'text'" [placeholder]="page==='login' ? 'you@example.com' : 'Your full name'">
+      </label>
+      <label *ngIf="page==='register'">
+        <span>Email address</span>
+        <input type="email" placeholder="you@example.com">
+      </label>
+      <label *ngIf="page==='invite'">
+        <span>Friend's email address</span>
+        <input type="email" placeholder="friend@example.com">
+      </label>
+      <label *ngIf="page==='register'">
+        <span>Organisation / profession <small>(optional)</small></span>
+        <input placeholder="Where do you work?">
+      </label>
+      <label *ngIf="page!=='invite'">
+        <span>Password</span>
+        <input type="password" autocomplete="current-password" placeholder="••••••••">
+      </label>
+      <label *ngIf="page==='invite'">
+        <span>A personal note <small>(optional)</small></span>
+        <textarea rows="3" placeholder="Why should they join?"></textarea>
+      </label>
+      <button class="button auth-btn" type="submit">{{page==='invite' ? 'Send invitation' : page==='login' ? 'Sign in' : 'Create account'}}</button>
+      <p class="auth-switch" *ngIf="page==='login'">New here? <a routerLink="/register">Create an account</a></p>
+      <p class="auth-switch" *ngIf="page==='register'">Already a member? <a routerLink="/login">Sign in</a></p>
+      <p class="auth-switch" *ngIf="page==='invite'">Want to join yourself? <a routerLink="/register">Create an account</a></p>
+    </form>
+
+    <div class="auth-trust">
+      <span>🔒 Your data is safe with us</span>
+      <span>18 partner NGOs</span>
+      <span>7,200+ donors</span>
+    </div>
+  </div>
+</section>
